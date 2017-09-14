@@ -3,11 +3,12 @@
 #include "rpc/server.h"
 
 #include <iostream>
+#include <getopt.h>
 
 #include <log4z/log4z.h>
 using namespace zsummer::log4z;
 
-struct Sub{
+struct Sub {
 	int operator()(int a, int b) {
 		return a - b;
 	}
@@ -23,25 +24,25 @@ void bad(int x) {
 	}
 }
 
-int server_test(int argc, char **argv) {
-
+int server_test(int port) {
 	// Create a server that listens on port 8080, or whatever the user selected
-	rpc::server srv("0.0.0.0", rpc::constants::DEFAULT_PORT);
+	rpc::server srv("0.0.0.0",
+			(port != 0) ? port : rpc::constants::DEFAULT_PORT);
 
 	// Binding the name "foo" to free function foo.
 	// note: the signature is automatically captured
 	srv.bind("foo", &foo);
 
 	// Binding a lambda function to the name "add".
-	srv.bind("add", [](int a, int b) { return a + b; });
+	srv.bind("add", [](int a, int b) {return a + b;});
 
 	srv.bind("sum", [](int v) {
-			int c = 0;
-			for (int i = 0; i < v; i++) {
-				c += i;
-			}
-			return c;
-			});
+		int c = 0;
+		for (int i = 0; i < v; i++) {
+			c += i;
+		}
+		return c;
+	});
 
 	// Throwing an exception will cause the server to write
 	// an error response. This call will make it also
