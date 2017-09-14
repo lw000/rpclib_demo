@@ -31,6 +31,7 @@ int client_test(int argc, char **argv) {
 		for (int i = 0; i < 10000; i++) {
 
 			result = client.call("sum", 1000).as<int>();
+			LOGFMTA("[%d] sum:%d", i, result);
 		}
 
 		clock_t t1 = clock();
