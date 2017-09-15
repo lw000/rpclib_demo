@@ -48,27 +48,28 @@ int client_test(const char* host, int port) {
 //	}
 
 	rpc::client client(host, (port != 0) ? port : rpc::constants::DEFAULT_PORT);
-	int result;
+	int c;
 	{
-		result = client.call("add", 2, 3).as<int>();
-		LOGFMTA("add:%d", result);
+		c = client.call("add", 2, 3).as<int>();
+		LOGFMTA("add:%d", c);
 
-		result = client.call("sub", 10, 20).as<int>();
-		LOGFMTA("sub:%d", result);
+		c = client.call("sub", 10, 20).as<int>();
+		LOGFMTA("sub:%d", c);
 	}
 
 	{
 		clock_t t = clock();
 
 		for (int i = 0; i < 10000; i++) {
-
-			result = client.call("sum", 1000).as<int>();
-//			LOGFMTA("[%d] sum:%d", i, result);
+			clock_t t = clock();
+			c = client.call("sum", 1000).as<int>();
+			clock_t t1 = clock();
+			LOGFMTA("exec [%d] [%d], times: %f", i, c,
+					((double) t1 - t) / CLOCKS_PER_SEC);
 		}
 
 		clock_t t1 = clock();
-		LOGFMTA("all exec times: %f, sum:%d", ((double)t1-t)/CLOCKS_PER_SEC,
-				result);
+		LOGFMTA("all exec times: %f, sum:%d", ((double)t1-t)/CLOCKS_PER_SEC, c);
 	}
 
 	return 0;
