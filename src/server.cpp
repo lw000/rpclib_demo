@@ -24,6 +24,14 @@ void bad(int x) {
 	}
 }
 
+int fact(int n) {
+	if (n == 1) {
+		return 1;
+	}
+
+	return n * fact(n - 1);
+}
+
 int server_test(int port) {
 	// Create a server that listens on port 8080, or whatever the user selected
 	rpc::server srv("0.0.0.0",
@@ -44,12 +52,17 @@ int server_test(int port) {
 		return c;
 	});
 
+	srv.bind("fact", [](int v) {
+			return fact(v);
+		});
+
 	// Throwing an exception will cause the server to write
 	// an error response. This call will make it also
 	// suppress the exception (note that this is not default
 	// because this behavior might hide errors in the
 	// code).
 	srv.suppress_exceptions(true);
+
 	srv.bind("bad", &bad);
 
 	Sub sub;
